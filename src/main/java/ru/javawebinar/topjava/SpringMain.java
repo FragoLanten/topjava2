@@ -2,13 +2,19 @@ package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository;
+import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SpringMain {
     public static void main(String[] args) {
@@ -16,20 +22,15 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
+
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 
-            InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository();
-            inMemoryUserRepository.save(new User(1, "AlexA", "email", "111111", Role.ADMIN));
-            inMemoryUserRepository.save(new User(2, "AlexC", "email", "111111", Role.ADMIN));
-            inMemoryUserRepository.save(new User(3, "AlexY", "email", "111111", Role.ADMIN));
-            inMemoryUserRepository.save(new User(10, "Boris", "email", "111111", Role.ADMIN));
-            inMemoryUserRepository.save(new User(1, "AlexB", "email", "111111", Role.ADMIN));
-            inMemoryUserRepository.save(new User(1, "Cedr", "email", "111111", Role.ADMIN));
+            InMemoryMealRepository inMemoryMealRepository = new InMemoryMealRepository();
 
-            List<User> list = inMemoryUserRepository.getAll();
 
-            for (User users:list) {
-                System.out.println(users.toString());
+            Collection<Meal> list = inMemoryMealRepository.getAll();
+            for (Meal meal:list) {
+                System.out.println(meal.toString());
             }
 
         }

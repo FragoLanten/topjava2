@@ -1,13 +1,15 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class InMemoryMealRepository implements MealRepository {
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
@@ -21,6 +23,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            meal.setUserId(SecurityUtil.authUserId());
             repository.put(meal.getId(), meal);
             return meal;
         }
@@ -30,17 +33,29 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id) {
-        return repository.remove(id) != null;
+        Meal meal = repository.get(id);
+        if (SecurityUtil.authUserId()==meal.getUserId()) {
+            return repository.remove(id) != null;
+        }
+        return false;
     }
 
     @Override
     public Meal get(int id) {
-        return repository.get(id);
+        Meal meal = repository.get(id);
+        if (SecurityUtil.authUserId()==meal.getUserId()) {
+            return repository.get(id);
+        }
+        else return null;
     }
 
     @Override
-    public Collection<Meal> getAll() {
-        return repository.values();
+    public List<Meal> getAll() {
+        List <Meal> list = (List<Meal>) repository.values();
+        return list.stream()
+                .filter(meal->meal.getUserId()==SecurityUtil.authUserId())
+                .sorted(Comparator.comparing(Meal::getDateTime))
+                .collect(Collectors.toList());
     }
 }
 
