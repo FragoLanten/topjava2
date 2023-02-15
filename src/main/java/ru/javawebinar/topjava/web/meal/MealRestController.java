@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
 
+import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -33,7 +34,7 @@ public class MealRestController {
         service.update(meal, userId);
     }
 
-    public List<Meal> getAll() {
+    public Collection<Meal> getAll() {
         return service.getAll(userId);
     }
 

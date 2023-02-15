@@ -21,20 +21,14 @@ import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-
-    private MealRestController mealRestController;
-    private ApplicationContext appCtx;
+    private final ApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+    private final MealRestController mealRestController = appCtx.getBean(MealRestController.class);;
 
     @Override
     public void init() {
-        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        mealRestController = appCtx.getBean(MealRestController.class);
+
     }
 
-    @Override
-    public void destroy() {
-        ((ClassPathXmlApplicationContext) appCtx).close();
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

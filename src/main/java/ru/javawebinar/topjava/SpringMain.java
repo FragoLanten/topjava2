@@ -25,13 +25,16 @@ public class SpringMain {
 
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 
-            InMemoryMealRepository inMemoryMealRepository = new InMemoryMealRepository();
+            MealRestController mealRestController = appCtx.getBean(MealRestController.class);
+            mealRestController.getAll();
 
-
-            Collection<Meal> list = inMemoryMealRepository.getAll();
-            for (Meal meal:list) {
-                System.out.println(meal.toString());
-            }
+//            InMemoryMealRepository inMemoryMealRepository = new InMemoryMealRepository();
+//
+//
+//            Collection<Meal> list = inMemoryMealRepository.getAll();
+//            for (Meal meal:list) {
+//                System.out.println(meal.toString());
+//            }
 
         }
     }

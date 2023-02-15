@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Repository
 public class InMemoryMealRepository implements MealRepository {
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -36,7 +38,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(int id, int userId) {
         Meal meal = repository.get(id);
         if (SecurityUtil.authUserId()==meal.getUserId()) {
             return repository.remove(id) != null;
@@ -45,7 +47,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id) {
+    public Meal get(int id, int userId) {
         Meal meal = repository.get(id);
         if (SecurityUtil.authUserId()==meal.getUserId()) {
             return repository.get(id);
@@ -54,12 +56,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll() {
-        List <Meal> list = (List<Meal>) repository.values();
-        return list.stream()
-                .filter(meal->meal.getUserId()==SecurityUtil.authUserId())
+    public Collection<Meal> getAll(int userId) {
+        Collection <Meal> list = repository.values();
+        List<Meal> list2= list.stream()
+                .filter(meal->meal.getUserId()==userId)
                 .sorted(Comparator.comparing(Meal::getDateTime))
                 .collect(Collectors.toList());
+        Collection<Meal> collection = list2;
+        return collection;
     }
 }
 
