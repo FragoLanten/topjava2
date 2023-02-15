@@ -16,14 +16,18 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(this::save);
+        for (Meal meal:MealsUtil.meals) {
+              this.save(meal, 0);
+        }
+
     }
 
+
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meal.setUserId(SecurityUtil.authUserId());
+            meal.setUserId(userId);
             repository.put(meal.getId(), meal);
             return meal;
         }

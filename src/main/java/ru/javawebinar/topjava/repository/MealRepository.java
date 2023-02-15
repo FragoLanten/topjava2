@@ -8,7 +8,7 @@ import java.util.List;
 // TODO add userId
 public interface MealRepository {
     // null if updated meal does not belong to userId
-    Meal save(Meal meal);
+    Meal save(Meal meal, int userId);
 
     // false if meal does not belong to userId
     boolean delete(int id);
@@ -18,4 +18,5 @@ public interface MealRepository {
 
     // ORDERED dateTime desc
     List<Meal> getAll();
+
 }

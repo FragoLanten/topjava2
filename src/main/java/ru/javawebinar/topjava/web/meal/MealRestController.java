@@ -15,24 +15,26 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public Meal create(Meal meal) {
-        return service.create(meal);
+    private int userId = authUserId();
+
+    public void create(Meal meal) {
+        service.create(meal, userId);
     }
 
     public Meal get(int id) {
-        return service.get(id);
+        return service.get(id, userId);
     }
 
     public void delete(int id) {
-        service.delete(id);
+        service.delete(id, userId);
     }
 
     public void update(Meal meal) {
-        service.update(meal);
+        service.update(meal, userId);
     }
 
     public List<Meal> getAll() {
-        return service.getAll();
+        return service.getAll(userId);
     }
 
 }
